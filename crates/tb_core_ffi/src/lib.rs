@@ -17,6 +17,7 @@
 mod agent_account_scope;
 mod agent_antigravity;
 mod agent_copilot;
+mod agent_cursor;
 mod agent_grok;
 mod agent_quota_duration;
 mod agent_quota_history;
@@ -31,6 +32,7 @@ mod hourly_report;
 mod window_usage;
 mod model_report;
 mod opencode_integrations;
+mod quota_dump;
 mod usage_graph;
 mod usage_tail;
 
@@ -911,6 +913,13 @@ pub extern "C" fn tb_tokens_per_min() -> *mut c_char {
             serde_json::json!({"tokensPerMin": TAILER.rate_in_window(600)}),
         ))
     })
+}
+
+/// JSON or text snapshot of the same provider poll as `tb_agent_usage`, plus
+/// the Cursor plan window and explicit unreadable rows. Used by the
+/// `tokenbar-quota` binary. Not part of the C ABI.
+pub fn quota_dump(table: bool) -> String {
+    RUNTIME.block_on(quota_dump::render(table))
 }
 
 /// OAuth quota cards (`AgentUsagePayload` in agentUsage.ts) for

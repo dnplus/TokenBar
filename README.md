@@ -89,7 +89,10 @@ Swift owns the rest: SwiftUI views, the `NSStatusItem` shell, Sparkle updates.
 make                        # cargo build --release, then swift build
 make run                    # build + launch TokenBar
 swift run TokenBar --smoke  # run the FFI smoke test
+make quota-dump             # macOS quota snapshot, no Syrtis UI
 ```
+
+To print every quota window from the machine where the providers are signed in, build `tokenbar-quota` and run it there. The steps, credential paths, and what an unreadable row means are in [docs/quota-dump.md](docs/quota-dump.md).
 
 The [project knowledge base](docs/knowledge/README.md) is the canonical guide to the Rust-to-Swift architecture, verification gates, shared-engine boundary, release chain, and maintenance state.
 

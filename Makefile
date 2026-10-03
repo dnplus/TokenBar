@@ -1,7 +1,7 @@
 # Build order matters: the Rust staticlib must exist before swift build links.
 # Run everything from the repo root (the -L path in Package.swift is relative).
 
-.PHONY: all rust build run clean check-docs selftest selftest-bundled
+.PHONY: all rust build run clean check-docs selftest selftest-bundled quota-dump
 
 all: build
 
@@ -10,6 +10,11 @@ check-docs:
 
 rust:
 	cargo build --release
+
+# Quota snapshot for the Mac where the providers are signed in. Does not
+# launch Syrtis. See docs/quota-dump.md.
+quota-dump:
+	cargo build --release -p tb_core_ffi --bin tokenbar-quota
 
 build: rust
 	@$(call relink_if_stale,debug)

@@ -10,7 +10,9 @@ publish = false
 # Windows, libtb_core_ffi.dylib for the macOS-side test loop). staticlib is
 # what the macOS app links via SwiftPM. Keeping both here means the Windows
 # repo's vendor re-sync is a byte-identical copy (no local re-apply).
-crate-type = ["cdylib", "staticlib"]
+# rlib lets the tokenbar-quota binary link this crate. cdylib and staticlib
+# stay for the WinUI P/Invoke and SwiftPM contracts.
+crate-type = ["cdylib", "staticlib", "rlib"]
 
 [dependencies]
 tokscale-core = { path = "../../vendor/tokscale-core" }
@@ -40,6 +42,10 @@ security-framework = "3.7"
 
 [dev-dependencies]
 tempfile = "3"
+
+[[bin]]
+name = "tokenbar-quota"
+path = "src/bin/tokenbar-quota.rs"
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows-sys = { version = "0.61", features = [

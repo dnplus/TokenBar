@@ -114,6 +114,63 @@ impl AgentUsagePayload {
             })
             .collect()
     }
+
+    pub(crate) fn generated_at(&self) -> &str {
+        &self.generated_at
+    }
+
+    pub(crate) fn opencode_subscriptions(&self) -> &[String] {
+        &self.opencode_subscriptions
+    }
+
+    /// Flat view of the cards `run` already produced. The dump CLI reads this
+    /// instead of the Swift wire, because `window_key` is not on that wire.
+    pub(crate) fn dump_cards(&self) -> Vec<AgentDumpCard> {
+        self.agents
+            .iter()
+            .map(|snapshot| AgentDumpCard {
+                provider_id: snapshot.client_id.clone(),
+                account: snapshot
+                    .identity
+                    .as_ref()
+                    .and_then(|identity| identity.email.clone()),
+                account_key: snapshot.account_key.clone(),
+                provider_source: snapshot.source.clone(),
+                sampled_at: snapshot.updated_at.clone(),
+                error: snapshot.error.clone(),
+                windows: snapshot
+                    .windows
+                    .iter()
+                    .map(|window| AgentDumpWindow {
+                        window_key: window.window_key.clone(),
+                        remaining_percent: window.remaining_percent,
+                        used_percent: window.used_percent,
+                        reset_at: window.resets_at.clone(),
+                    })
+                    .collect(),
+            })
+            .collect()
+    }
+}
+
+/// One provider card, reduced to the fields the quota dump is allowed to print.
+#[derive(Debug, Clone)]
+pub(crate) struct AgentDumpCard {
+    pub(crate) provider_id: String,
+    pub(crate) account: Option<String>,
+    pub(crate) account_key: Option<String>,
+    pub(crate) provider_source: String,
+    pub(crate) sampled_at: String,
+    pub(crate) error: Option<String>,
+    pub(crate) windows: Vec<AgentDumpWindow>,
+}
+
+#[derive(Debug, Clone)]
+pub(crate) struct AgentDumpWindow {
+    pub(crate) window_key: Option<String>,
+    pub(crate) remaining_percent: f64,
+    pub(crate) used_percent: f64,
+    pub(crate) reset_at: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -3300,6 +3357,7 @@ fn load_claude_credentials_from_keychain_item(
 
 #[cfg(not(target_os = "macos"))]
 fn load_claude_credentials_from_keychain_item(
+    _service: &str,
     _account: Option<&str>,
 ) -> Result<Option<String>, String> {
     Ok(None)
