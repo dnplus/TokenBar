@@ -7,10 +7,12 @@
 From the repository root, on Apple Silicon:
 
 ```sh
-cargo build --release -p tb_core_ffi --bin tokenbar-quota
+CARGO_PROFILE_RELEASE_STRIP=none cargo build --release -p tb_core_ffi --bin tokenbar-quota
 ```
 
 `make quota-dump` runs that command. The binary is `target/release/tokenbar-quota`. Swift and the Syrtis bundle are not required.
+
+The workspace release profile sets `strip = "debuginfo"`. On this Mac that strip mis-aligns proc-macro dylibs, and dyld then fails the build with `can't find crate for zerofrom_derive`. The environment variable turns strip off for this binary only. `cargo build --release` for the Syrtis static library stays stripped. Linux can use the same variable. It does not change the app profile.
 
 ## Run
 

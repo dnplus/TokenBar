@@ -24,7 +24,7 @@ Print every TokenBar quota window as JSON.
 Run this on the Mac where Claude, Codex, Grok, Antigravity, and Cursor are signed in.
 It does not open Syrtis.
 
-  cargo build --release -p tb_core_ffi --bin tokenbar-quota
+  CARGO_PROFILE_RELEASE_STRIP=none cargo build --release -p tb_core_ffi --bin tokenbar-quota
   ./target/release/tokenbar-quota
   ./target/release/tokenbar-quota --table
 

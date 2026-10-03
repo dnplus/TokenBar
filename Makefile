@@ -13,8 +13,9 @@ rust:
 
 # Quota snapshot for the Mac where the providers are signed in. Does not
 # launch Syrtis. See docs/quota-dump.md.
+# poteto: macOS dyld rejects proc-macro dylibs after strip=debuginfo.
 quota-dump:
-	cargo build --release -p tb_core_ffi --bin tokenbar-quota
+	CARGO_PROFILE_RELEASE_STRIP=none cargo build --release -p tb_core_ffi --bin tokenbar-quota
 
 build: rust
 	@$(call relink_if_stale,debug)
